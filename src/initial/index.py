@@ -17,7 +17,7 @@ def handler(event, context):
     try:
         region = os.getenv("FC_REGION")
         root = os.getenv("NAS_ROOT")
-        download_file("https://dipper-cache-%s.oss-%s-internal.aliyuncs.com/models/loras/flux_wukong.safetensors" % (region, region), "%s/models/loras/flux_wukong.safetensors" % root)
+        download_file("https://dipper-cache-%s.oss-%s-internal.aliyuncs.com/huggingface/city96/FLUX.1-dev-gguf/flux1-dev-Q8_0.gguf" % (region, region), "%s/models/unet/flux1-dev-Q8_0.gguf" % root)
     except Exception as e:
         print(e)
         raise e

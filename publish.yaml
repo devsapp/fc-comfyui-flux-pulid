@@ -1,10 +1,10 @@
 Edition: 3.0.0
 Type: Project
-Name: fc-comfyui-flux
+Name: fc-comfyui-flux-pulid
 Provider:
   - 阿里云 
-Version: 0.0.3
-Description: 部署 ComfyUI + Flux 到阿里云函数计算
+Version: dev
+Description: 部署 ComfyUI + Flux Pulid 到阿里云函数计算
 HomePage: https://github.com/devsapp/fc-comfyui-flux
 Tags: 
   - 部署函数
