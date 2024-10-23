@@ -44,6 +44,7 @@ resources:
       nasConfig: ${vars.nasConfig}
       environmentVariables:
         NAS_DIR: "/mnt/${resources.comfyui.props.functionName}"
+        EXTRA_ARGS: --disable-cuda-malloc
 
   initial:
     component: fc3

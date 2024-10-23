@@ -3,7 +3,7 @@ Type: Project
 Name: fc-comfyui-flux-pulid
 Provider:
   - 阿里云 
-Version: dev
+Version: 0.0.2
 Description: 部署 ComfyUI + Flux Pulid 到阿里云函数计算
 HomePage: https://github.com/devsapp/fc-comfyui-flux
 Tags: 

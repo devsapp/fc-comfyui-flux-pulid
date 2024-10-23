@@ -26,7 +26,14 @@
 使用该项目，您需要有开通以下服务并拥有对应权限：
 
 <service>
+
+| 服务 |  备注  |
+| --- |  --- |
+| 函数计算 FC |  提供 CPU、GPU 等计算资源 |
+| 文件存储 NAS |  存储大模型文件 |
+
 </service>
+
 
 <remark>
 
@@ -61,9 +68,11 @@
 
 <appdetail id="flushContent">
 
-本案例展示了如何将 Flux 部署到阿里云函数计算上，从而在云端体验 Flux 文生图的 AIGC 创作活动。
+本案例展示了如何将 PuLID for FLUX 部署到阿里云函数计算上，从而在云端体验人像写真的换脸效果。
 
 Flux 是由 Black Forest Labs 推出的文生图模型，其在文本控制、绘图质量、排版能力等多方面已经超越了包括 Midjourney、Stable Diffusion 等常用的文生图模型。
+
+PuLID for Flux 是一个优秀的AI 头像生成项目，它提供了一种无需训练 LoRA 就能实现面部迁移信息保持的方法。这个项目特别适合用于 FLUX.1-dev 模型，能够生成人脸高度一致性的风格化图像 。PuLID for Flux 的使用场景非常广泛，包括但不限于艺术创作、虚拟形象定制、影视制作、广告与营销以及社交媒体等 。它能够提供逼真的面部定制，保持原始风格，支持个性化编辑，并且能够快速生成图像，无需复杂的模型调整或参数优化 。
 
 ComfyUI 是一个为 Stable Diffusion 模型设计的，功能强大且高度模块化的图形用户界面（GUI）。它允许用户基于节点构建 AIGC 创作流程，非常适合那些想要摆脱传统编程方法、采用更直观操作流程的用户。该工具由 Comfyanonymous 在 2023 年 1 月创建，初衷是深入了解 Stable Diffusion 模型的运作机制。由于其易用性，Stable Diffusion 的开发者 Stability AI 也采用了 ComfyUI 进行内部测试，并聘请 Comfyanonymous 协助开发内部工具。目前，ComfyUI 在 Github 上的 Fork 数超过 3000，Star 数超过 30000。
 
@@ -75,608 +84,76 @@ ComfyUI 提供了方便的能力使用 Flux 进行文本绘图。通过 Serverle
 
 <usedetail id="flushContent">
 
-### 基本文生图
+### 创建并部署Flux模型
 
-1. 打开 ComfyUI，点击“Queue Prompt”开始。
-2. 稍等片刻后，您将得到第一张图片。若需要恢复默认工作流，请使用“Load Default”，并记得保存您的工作流以避免丢失。
+1. 打开 FC 应用中心，选择“人工智能”Flux Pulid 换脸，单击立即创建。
 
-![](https://img.alicdn.com/imgextra/i2/O1CN01nML52f1mIRwjP3sPy_!!6000000004931-0-tps-1226-889.jpg)
+![](https://img.alicdn.com/imgextra/i2/O1CN01JrRhZS1WqlpKgsP5F_!!6000000002840-0-tps-2517-983.jpg)
 
-### 挂载 NAS 和使用自定义节点
+2. 在创建应用页面，点击“创建应用”
 
-为使用自定义模型和节点，需先绑定文件管理 NAS。通过函数控制台的网络配置，绑定专有网络/交换机。若无相关资源，需先创建。
+3. 等待约1分钟，部署状态变为部署成功，表示应用部署成功，并生成访问域名，单击访问域名后的链接，开始体验 Flux 大模型生图。
 
-我们已为您自动创建并挂载的通用性能型 NAS 实例，NAS 会根据存储的文件大小进行计费，不通规格的 NAS 计费单价不一致，请参考相关文档。
-
-
-### 进入 ComfyUI 终端
-
-函数计算支持登入运行中的函数实例，您可以在终端中执行需要的操作（如手动安装自定义节点、依赖等）
-
-注意，在 Serverless 环境下，您的所有改动都不会真正保存，您需要将改动的文件放置在 NAS 中以持久化
-
-![](https://img.alicdn.com/imgextra/i2/O1CN01p2zERS21sNFaFIFlK_!!6000000007040-0-tps-1522-846.jpg)
-
-
-### 文件上传及下载
-
-借助 NAS 文件浏览器功能，您可以方便地进行云上文件管理
-
-![](https://img.alicdn.com/imgextra/i1/O1CN01qBoRgE1Us1czB7Doi_!!6000000002572-0-tps-1533-574.jpg)
-
-
-### 安装自定义节点
-
-以安装中文翻译插件 [AIGODLIKE-COMFYUI-TRANSLATION](https://github.com/AIGODLIKE/AIGODLIKE-COMFYUI-TRANSLATION) 为例，使用 ComfyUI-Manager 进行安装。
-
-![](https://img.alicdn.com/imgextra/i1/O1CN01cpHWUJ1WQfCKAZoVB_!!6000000002783-0-tps-1339-893.jpg)
-
-搜索要安装的节点名称，点击 install
-
-![](https://img.alicdn.com/imgextra/i2/O1CN014lNLJe1lebUP6PYxn_!!6000000004844-0-tps-1368-270.jpg)
+![](https://img.alicdn.com/imgextra/i4/O1CN01O921Td1tU5NCalcbu_!!6000000005904-0-tps-1536-878.jpg)
 
 **注意**
-- 安装过程中请不要关闭页面。安装完成后，除去需要点击 restart 外，还需要刷新页面
-- 安装过程中可能会访问 Github、HuggingFace 等境外网站，由于网络问题可能会导致访问较慢或失败，您可以在网络上检索如何解决类似的问题。 )
+  - 请注意保护域名的安全，不要泄露给其他人，防止产生额外费用。
+  - `***.devsapp.net`域名是 CNCF SandBox 项目 Serverless Devs 社区所提供，仅供学习和测试使用，不可用于任何生产使用；社区会对该域名进行不定期地拨测，并在域名下发30天后进行回收，强烈建议您绑定自定义域名以获得更好的使用体验。
 
-### 加速依赖下载
+4. 首次打开ComfyUI，遇到无法访问此网站情况，等待10 秒左右单击重新加载。
 
-使用国内 pypi 镜像加速依赖下载。编辑 `/mnt/auto/comfyui/root/.pip/pip.conf` 文件，设置镜像源为阿里云。
-
-```
-[global]
-index-url = http://mirrors.aliyun.com/pypi/simple/
-[install]
-trusted-host = https://mirrors.aliyun.com
-```
-
-### 解决缺失节点的问题
-
-导入第三方的工作流，可能会遇到节点不存在的报错，可以借助 ComfyUI Manager 安装缺失的节点
-
-![](https://img.alicdn.com/imgextra/i4/O1CN015Ovmyr1VPSXWcUvit_!!6000000002645-0-tps-840-442.jpg)
-
-![](https://img.alicdn.com/imgextra/i2/O1CN01aSPkBh22XatVsvQrX_!!6000000007130-0-tps-1363-886.jpg)
+![](https://img.alicdn.com/imgextra/i3/O1CN01Atdvpe27tBhYRpKQb_!!6000000007854-0-tps-1324-752.jpg)
 
 
-部分节点升级后，可能仍然提示未安装，可参考 [ComfyUI Guides](https://comfyui-guides.runcomfy.com/) 的相关讨论解决。
 
-> How to fix: A red node for “IPAdapterApply”?
-> You must already follow our instructions on how to install IP-Adapter V2, and it should all working properly. Now you see a red node for “IPAdapterApply”.
->
-> That is because you are working on a workflow with IPAdapter V1 node, simply just replace the V1 node with the V2 ones or uninstall IPA v2 and rollback to V1 if you feel like it.
+### ComfyUI+Flux+Pulid 实现换脸写真
 
+1.  访问下方链接，下载预置的 json文件（如果看到为代码，可直接复制全部代码，粘贴到ComfyUI 中即可）[workflow.json](https://aliyuque.antfin.com/raw?filekey=lark%2F0%2F2024%2Fjson%2F168324%2F1729131998221-6e7c3195-620e-4eba-b6e9-5d67310c6bfd.json&from=https%3A%2F%2Faliyuque.antfin.com%2Fite309%2Fqhifem%2Fnge05g9540ns2ph8%2Fedit%2304d483b2ccm2m)
 
-### ControlNet 的使用
+2. 在页面右下角，单击Load，将下载并解压后的json文件导入到 ComfyUI 中。
 
-展示了使用 ControlNet 对比直接输出的差异，提供了工作流 JSON 示例以及对应模型的下载说明。
+![](https://img.alicdn.com/imgextra/i4/O1CN01BDN1sU1lWMPmVrOzh_!!6000000004826-0-tps-703-567.jpg)
 
-![](https://img.alicdn.com/imgextra/i4/O1CN01R8bT461O1STVjkkfy_!!6000000001645-0-tps-2090-1062.jpg)
+![](https://img.alicdn.com/imgextra/i4/O1CN01my25wX1WxdlhA4p2V_!!6000000002855-0-tps-1619-1226.jpg)
 
-<details><summary>工作流文件</summary>
+3. 点击“choose file to upload” 上传本地的人像图片
 
-```json
-{
-  "last_node_id": 12,
-  "last_link_id": 16,
-  "nodes": [
-    {
-      "id": 11,
-      "type": "FluxGuidance",
-      "pos": [
-        857,
-        185
-      ],
-      "size": {
-        "0": 317.4000244140625,
-        "1": 58
-      },
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning",
-          "type": "CONDITIONING",
-          "link": 10,
-          "label": "conditioning"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            11
-          ],
-          "shape": 3,
-          "slot_index": 0,
-          "label": "CONDITIONING"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "FluxGuidance"
-      },
-      "widgets_values": [
-        3.5
-      ]
-    },
-    {
-      "id": 8,
-      "type": "VAEDecode",
-      "pos": [
-        866,
-        623
-      ],
-      "size": {
-        "0": 210,
-        "1": 46
-      },
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 7,
-          "label": "Latent"
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 8,
-          "label": "VAE"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            9
-          ],
-          "slot_index": 0,
-          "label": "图像"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      }
-    },
-    {
-      "id": 9,
-      "type": "SaveImage",
-      "pos": [
-        1220,
-        187
-      ],
-      "size": {
-        "0": 661.95703125,
-        "1": 923.08984375
-      },
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 9,
-          "label": "图像"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "ComfyUI"
-      ]
-    },
-    {
-      "id": 3,
-      "type": "KSampler",
-      "pos": [
-        861,
-        308
-      ],
-      "size": {
-        "0": 315,
-        "1": 262
-      },
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 14,
-          "label": "模型"
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 11,
-          "label": "正面条件"
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 6,
-          "label": "负面条件"
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 2,
-          "label": "Latent"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            7
-          ],
-          "slot_index": 0,
-          "label": "Latent"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler"
-      },
-      "widgets_values": [
-        453117095366540,
-        "randomize",
-        20,
-        1,
-        "euler",
-        "normal",
-        1
-      ]
-    },
-    {
-      "id": 7,
-      "type": "CLIPTextEncode",
-      "pos": [
-        397,
-        391
-      ],
-      "size": {
-        "0": 425.27801513671875,
-        "1": 180.6060791015625
-      },
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 16,
-          "label": "CLIP"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            6
-          ],
-          "slot_index": 0,
-          "label": "条件"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        ""
-      ]
-    },
-    {
-      "id": 4,
-      "type": "CheckpointLoaderSimple",
-      "pos": [
-        56,
-        176
-      ],
-      "size": {
-        "0": 315,
-        "1": 98
-      },
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            13
-          ],
-          "slot_index": 0,
-          "label": "模型"
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            12
-          ],
-          "slot_index": 1,
-          "label": "CLIP"
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            8
-          ],
-          "slot_index": 2,
-          "label": "VAE"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CheckpointLoaderSimple"
-      },
-      "widgets_values": [
-        "flux1-dev-fp8.safetensors"
-      ]
-    },
-    {
-      "id": 5,
-      "type": "EmptyLatentImage",
-      "pos": [
-        403,
-        622
-      ],
-      "size": {
-        "0": 315,
-        "1": 106
-      },
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            2
-          ],
-          "slot_index": 0,
-          "label": "Latent"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "EmptyLatentImage"
-      },
-      "widgets_values": [
-        768,
-        1024,
-        1
-      ]
-    },
-    {
-      "id": 12,
-      "type": "LoraLoader",
-      "pos": [
-        420,
-        -50
-      ],
-      "size": {
-        "0": 315,
-        "1": 126
-      },
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 13,
-          "label": "模型"
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 12,
-          "label": "CLIP",
-          "slot_index": 1
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            14
-          ],
-          "shape": 3,
-          "tooltip": "The modified diffusion model.",
-          "label": "模型",
-          "slot_index": 0
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            15,
-            16
-          ],
-          "shape": 3,
-          "tooltip": "The modified CLIP model.",
-          "label": "CLIP",
-          "slot_index": 1
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoraLoader"
-      },
-      "widgets_values": [
-        "flux-lora-000003.safetensors",
-        3,
-        1
-      ]
-    },
-    {
-      "id": 6,
-      "type": "CLIPTextEncode",
-      "pos": [
-        402,
-        175
-      ],
-      "size": {
-        "0": 422.84503173828125,
-        "1": 164.31304931640625
-      },
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 15,
-          "label": "CLIP"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            10
-          ],
-          "slot_index": 0,
-          "label": "条件"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "wukong, monkey king, monkey face, gray hair，play computer"
-      ]
-    }
-  ],
-  "links": [
-    [
-      2,
-      5,
-      0,
-      3,
-      3,
-      "LATENT"
-    ],
-    [
-      6,
-      7,
-      0,
-      3,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      7,
-      3,
-      0,
-      8,
-      0,
-      "LATENT"
-    ],
-    [
-      8,
-      4,
-      2,
-      8,
-      1,
-      "VAE"
-    ],
-    [
-      9,
-      8,
-      0,
-      9,
-      0,
-      "IMAGE"
-    ],
-    [
-      10,
-      6,
-      0,
-      11,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      11,
-      11,
-      0,
-      3,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      12,
-      4,
-      1,
-      12,
-      1,
-      "CLIP"
-    ],
-    [
-      13,
-      4,
-      0,
-      12,
-      0,
-      "MODEL"
-    ],
-    [
-      14,
-      12,
-      0,
-      3,
-      0,
-      "MODEL"
-    ],
-    [
-      15,
-      12,
-      1,
-      6,
-      0,
-      "CLIP"
-    ],
-    [
-      16,
-      12,
-      1,
-      7,
-      0,
-      "CLIP"
-    ]
-  ],
-  "groups": [],
-  "config": {},
-  "extra": {
-    "ds": {
-      "scale": 1.2100000000000002,
-      "offset": [
-        -36.69525444125759,
-        72.04083143388111
-      ]
-    }
-  },
-  "version": 0.4
-}
-```
+![](https://img.alicdn.com/imgextra/i2/O1CN01sQ3SFQ1rwMayXRCN9_!!6000000005695-0-tps-825-405.jpg)
+
+4. 在页面右下方，直接单击 Queue Prompt，通过默认的提示词生成图像
+
+![](https://img.alicdn.com/imgextra/i2/O1CN01vfhNdB1NKPIZMHi5y_!!6000000001551-0-tps-688-541.jpg)
+
+> 重要：由于ComfyUI自身需要长久保持WebSocket连接以同步实时状态，因此页面打开时会持续使用计算资源，即页面打开就会有费用产生请您在不使用ComfyUI的时候关闭页面，如果不进行主动操作，页面也会在 10 分钟后自动关闭，以节省您的费用。
+
+5. 因为 ComfyUI 基于 Serverless 函数计算产品部署，因此生成第一张图的时候需要冷启动时间，第一张图生成需要等待 5 分钟左右，后续每张图生成时间为 2-5 秒。
+
+![](https://img.alicdn.com/imgextra/i3/O1CN01pPCwPo1lxNma8CPeS_!!6000000004885-0-tps-720-334.jpg)
+
+![](https://img.alicdn.com/imgextra/i4/O1CN01yVmCQN1vSpWFJedEY_!!6000000006172-0-tps-720-410.jpg)
+
+6. 您可以通过修改“提示词”生成更多风格
+
+![](https://img.alicdn.com/imgextra/i1/O1CN01iLZp1g1yzIRTsGnnu_!!6000000006649-0-tps-2227-454.jpg)
+
+您也可以使用下面示例图片体验效果（以下图片为 AI 生成）
+
+![](https://img.alicdn.com/imgextra/i4/O1CN010j9e991TYxZwmqHgn_!!6000000002395-0-tps-949-697.jpg)
+
+女生可选:
+提示词1：Half-body portrait of a young woman with an expression of awe and fascination, immersed in the intricate web of AI algorithms and data streams, surrounded by sleek laptops and a nest of charging cables. Her blouse bears the words "AI Enthusiast" in an elegant script font, reflecting her passion for artificial intelligence. The background is a soft glow, reminiscent of a well-lit workspace, with a photorealistic touch that adds depth to the scene. Her skin is depicted with natural imperfections, capturing the essence of a candid smartphone snapshot, yet with the detail and texture that suggest the use of a high-quality camera. The image conveys a realistic, non-glamorized portrayal of her features, with an laptop prominently displayed in the corner, indicating her tech-savvy persona.
+
+提示词2: Half-body portrait of a young girl with an expression of curiosity and excitement, immersed in the digital world of virtual reality, surrounded by high-tech augmented reality glasses and floating holographic screens, her sweatshirt printed with the words "Future Explorer" in a stylish font, the background filled with dynamic data streams and galaxy-like speckles of light, featuring a futuristic style, with photorealistic details and natural skin texture, as if shot with a high-end smartphone, the skin details are authentic and not artificial, with an laptop placed beside her.
+
+男生可选：
+提示词1: Half-body portrait of a young man with a focused and confident smile, surrounded by the glow of encoded matrices and programming languages, with multiple coding monitors and a tangle of data cables around him, his T-shirt printed with "Code Master" in a clean sans-serif font, the background displaying the radiance of digital circuits and optical fibers, featuring a cyberpunk style, with photorealistic visual effects, clear skin texture, as if captured with a professional camera, the skin details are realistic and tactile, with a mechanical keyboard placed beside him.
+
+提示词2: Half-body portrait of a young man with a gaze that is resolute and brimming with passion, encircled by the halo of innovative technology, surrounded by multiple touch-screen monitors displaying intricate algorithms and system architectures, as well as a maze of data cables and charging wires. He dons a T-shirt imprinted with "Tech Pioneer" in modern, minimalist font, symbolizing his vanguard status in the realm of technology. The background flickers with the indicator lights of smart devices and flowing lines of code, presenting a science fiction style with a tinge of futurism. The image is rendered with photographic realism, skin textures are clearly visible, as if meticulously captured with a professional camera, with details so authentic they eschew any plastic appearance. Beside him lies gaming mouse, hinting at his love and pursuit of high-performance technology.
+
+您也可以通过 [通义](https://tongyi.aliyun.com/qianwen/) 或者其他AI大语言模型生成其他提示词，尝试其他生图效果
+
+![](https://img.alicdn.com/imgextra/i4/O1CN01eNLsRV1j0BLznfrj9_!!6000000004485-0-tps-1125-689.jpg)
+
 
 </details>
 
